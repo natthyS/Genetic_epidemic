@@ -14,7 +14,7 @@ def plot_adaptacion(list_generations, list_mej_adap,**parameters):
     file_name = "adapt"
 
     for key, value in parameters.items():
-        file_name += "_{}:{}".format(key,value)
+        file_name += "_{}-{}".format(key,value)
 
     file_name += ".jpg"
 
