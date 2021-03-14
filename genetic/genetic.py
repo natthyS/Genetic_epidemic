@@ -2,8 +2,10 @@ import logging
 import numpy as np
 import random
 from scipy.integrate import odeint
-from teoretic import Diff_Equ
+from teoric.utils_equations import Diff_Equ
 from scipy.special import softmax
+from genetic.crossover import crossover_wt_par, crossover_bt_par, croosover_in_point
+import logging
 
 def f_decodi(individuo, x_min, x_max, t_p, n_p):
 
@@ -87,7 +89,7 @@ def seleccion(f_adapta):
   
   return (ind1, ind2)
 
-def reproduccion(n_tp, p_repro, p_bina, ind1, ind2):
+def reproduccion(p_repro, p_bina, ind1, ind2, mode, t_p):
   '''
   inputs:
     n_tp: tamaño total del cromosoma
@@ -102,11 +104,24 @@ def reproduccion(n_tp, p_repro, p_bina, ind1, ind2):
   xx = np.random.rand()
   if ( p_repro < xx ): 
     return (p_bina[ind1,:], p_bina[ind2,:])
-  # si xx es mayor que p_repro, entonces se da la reproducción
-  k = np.random.randint(1, n_tp) # valor donde se partira el cromosoma para la reproducción
-  hijo1 = np.concatenate( (p_bina[ind1, :k][-1], p_bina[ind2, k:][-1]) ) # Se combinan los dos padres para dar un hijo
-  hijo2 = np.concatenate( (p_bina[ind2, :k][-1], p_bina[ind1, k:][-1]) ) # Se combinan los dos padres para dar el otro hijo
-  return (hijo1, hijo2)
+
+  if mode == 'bt_par': 
+    hijo1, hijo2 = crossover_bt_par(p_bina[ind1,:], p_bina[ind2,:], t_p)
+
+  elif mode == 'wt_par':
+    hijo1, hijo2 = crossover_wt_par(p_bina[ind1,:], p_bina[ind2,:], t_p)
+
+  elif mode == 'bt_wt_par': 
+    hijo1, hijo2 = crossover_bt_par(p_bina[ind1,:], p_bina[ind2,:], t_p)
+    hijo1, hijo2 = crossover_wt_par(hijo1, hijo2, t_p)
+
+  elif mode == 'bk_par':
+    hijo1, hijo2 = croosover_in_point(p_bina[ind1,:], p_bina[ind2,:], t_p)
+
+  else: 
+    logging.info('El Modo no existente') 
+  
+  return hijo1, hijo2
 
 def mutation(N_indv, n_tp, p_muta, bt):
   '''

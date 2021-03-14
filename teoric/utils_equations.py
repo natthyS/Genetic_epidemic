@@ -1,3 +1,13 @@
+def Diff_Equ_2(y_t, t, sigma, gamma, beta, f):
+    S, E, I, R, D = y_t
+    Nn = S+E+I+R
+    dS_dt = -sigma*S
+    dE_dt = gamma*E*I + sigma*S
+    dI_dt = gamma*beta*(I**2) -gamma*I
+    dR_dt = (1.0-f)*gamma*I
+    dD_dt = f*gamma*I
+    return [dS_dt, dE_dt, dI_dt, dR_dt, dD_dt]
+
 
 def Diff_Equ(y_t, t, sigma, gamma, beta, f):
     S, E, I, R, D = y_t
@@ -8,7 +18,4 @@ def Diff_Equ(y_t, t, sigma, gamma, beta, f):
     dR_dt = (1.0-f)*gamma*I
     dD_dt = f*gamma*I
     return [dS_dt, dE_dt, dI_dt, dR_dt, dD_dt]
-
-
-
 

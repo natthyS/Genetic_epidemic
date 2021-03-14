@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
 import utils.utils as utils
-from genetic import f_adaptacion, seleccion, reproduccion, mutation
+from utils.metrics import jaccard_index_ind, jaccard_index_population, sorensen_index_population
+from genetic.genetic import f_adaptacion, seleccion, reproduccion, mutation
 import logging
 log_format = '%(asctime)s | (line %(lineno)d %(filename)s) | [%(levelname)s]: %(message)s'
 logging.basicConfig(format= log_format, level=logging.INFO)
@@ -16,8 +17,10 @@ n_tp = n_p * t_p    # tamaño total del cromosoma
 x_min = 0           # valor min y max de cada parametro
 x_max = 1
 
+
 # Parametros de resultados
-grafi = 50       # cada cuantos pasos guardo el valor de adaptación para graficarlos
+grafi = 5           # cada cuantos pasos guardo el valor de adaptación para graficarlos
+
 
 def main_loop(data, parametros):
 
@@ -34,9 +37,17 @@ def main_loop(data, parametros):
   current_step = 0                # contador de paso actual
   ada_mejor = -1.0                # Adaptacion del mejor individuo
   ada_mejor_h = -1.0              # Adaptación del mejor individuo en la historia
-  list_mej_adap = []                   # Lista con las mejores adaptaciones por generación
-  list_generations = []                 # Lista para guardar el contador de las mejores generaciones 
-                                  # y las que se va a graficar
+
+  # Create a dictionary with the variables to plot results
+  meta_results = {
+    'l_mej_adap': [],
+    'l_generations': [],
+    'l_mej_ind': [],
+    'l_jaccard_ind' : [],
+    'l_jaccard_pop' : [],
+    'l_sorensen_pop' : [],
+    'l_adaptations' : []
+  }
 
   # Temporales y Auxiliares
   mejor =  np.random.randint(2, size=(n_tp) ) 
@@ -52,40 +63,43 @@ def main_loop(data, parametros):
     #Ciclo de reproducción
     for i in range(0,N_ind_dead ,2):
       id1, id2 = seleccion(f_adapta)
-      bina_temp[i, :], bina_temp[i+1, :]  = reproduccion(n_tp, parametros['pr'], poblacion_actual, id1, id2)
+      bina_temp[i, :], bina_temp[i+1, :]  = reproduccion(parametros['pr'], poblacion_actual, id1, id2, parametros['xmode'], t_p)
+      
     
     # Mutación
     bina_temp = mutation(N_ind_dead,n_tp, parametros['pm'], bina_temp)
 
-    #Guardar la mejor adaptación
+    #Actualizo la mejor adaptación
     ada_mejor = np.amax(f_adapta)
     indice = np.argmax(f_adapta)
     if ada_mejor > ada_mejor_h:
-      list_mej_adap.append(ada_mejor)                  # Guardo el historial del ada mejor
-      list_generations.append(current_step)                     # Guardo la generacion actual
       ada_mejor_h = ada_mejor                     # Guardo el mejor valor de adaptación
       mejor = np.copy(poblacion_actual[indice,:]) # Guardo el mejor individuo en binarios
-
+    
     #Guardar para graficar
     if current_step%grafi == 0:
-      logging.info('paso actual: {} adapta mejor: {}'.format(current_step,ada_mejor))    
-      list_mej_adap.append(ada_mejor)
-      list_generations.append(current_step)
+      meta_results['l_mej_adap'].append(ada_mejor)
+      meta_results['l_generations'].append(current_step)
+      meta_results['l_mej_ind'].append(mejor)
+      meta_results['l_adaptations'].append(f_adapta) # n, bins, patches = plt.hist(f_adapta)
 
-    # Ordenar por valor de adaptación (mayor a menor)
-    poblacion_actual = poblacion_actual[np.argsort(f_adapta)]
-    poblacion_actual = np.flip(poblacion_actual, axis=0)
+      meta_results['l_jaccard_ind'].append(jaccard_index_ind(poblacion_actual, indice))
+      meta_results['l_jaccard_pop'].append(jaccard_index_population(poblacion_actual))
+      meta_results['l_sorensen_pop'].append(sorensen_index_population(poblacion_actual))
+      
+      logging.info('Step: {} AdaBest : {} JaccI: {:.4f} JaccP: {:.4f} SorsP: {:.4f}'.format(
+                                    current_step,
+                                    meta_results['l_mej_adap'][-1],
+                                    meta_results['l_jaccard_ind'][-1],
+                                    meta_results['l_jaccard_pop'][-1],
+                                    meta_results['l_sorensen_pop'][-1]
+                                    ))    
+
 
     # Matar a los menos aptos
     poblacion_actual[-N_ind_dead:,:] = bina_temp
     
     #Incrementar el current_step
     current_step += 1
-
-    # Create a dictionary with the variables to plot results
-    meta_results = {
-      'list_mej_adap': list_mej_adap,
-      'list_generations': list_generations
-    }
 
   return mejor, meta_results
