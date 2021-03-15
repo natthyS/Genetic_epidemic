@@ -3,15 +3,16 @@ import pandas as pd
 import utils.plot_utils as plot_utils
 
 # Parametros ajustables
-N_indv = 100         # Número de individuos(par)
+N_indv = 20         # Número de individuos(par)
 N_pasos = 1000       # Numero de pasos de la simulación; número de generacions
 p_repro = 0.95       # probabilidad de reproducción, la mayorio del tiempo es fijo
-p_muta = 0.5         # probabilidad de mutación
-p_sup = 0.10         # probabilidad de supervivencia o porcentaje que se conserva de la generacion previa
+p_muta = 0.4         # probabilidad de mutación
+p_sup = 0.15         # probabilidad de supervivencia o porcentaje que se conserva de la generacion previa
 cross_mode = 'bt_wt_par'# tipo de crossover (reproduccion) 
                      # bt_par : crossover between parameters
                      # wt_par : crossover within parameters
                      # bt_wt_par : crossover between and within parameters
+                     # bk_par : crossover in one point
  
 #Parametros del modelo teorico
 I0 = 7                              # numero inicial de infectados
