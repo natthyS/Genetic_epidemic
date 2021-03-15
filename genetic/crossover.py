@@ -3,14 +3,25 @@ import random
 
 
 def croosover_in_point(p_1, p_2, t_p):
-    k = np.random.randint(1, t_p * 4) # valor donde se partira el cromosoma para la reproducción
+    """[This function crosses only one point of the entire chromosome (one point for all 4 parameters)]
+
+    Args:
+        p_1 ([np.array]): [patern_1]
+        p_2 ([np.array]): [patern_1]
+        t_p ([int]): [size of parameter]
+
+    Returns:
+        hijo1, hijo2 [np.array]: [hijo 1 y hijo 2]
+    """    
+
+    k = np.random.randint(1, t_p * 4)            # valor donde se partira el cromosoma para la reproducción
     hijo1 = np.concatenate( (p_1[:k], p_2[k:]) ) # Se combinan los dos padres para dar un hijo
     hijo2 = np.concatenate( (p_2[:k], p_1[k:]) ) # Se combinan los dos padres para dar el otro hijo
     
     return hijo1, hijo2
-
+    
 def crossover_wt_par(p_1, p_2, t_p):
-    """[This function performs a crossover some portions of parameters (within parameter) of two parent individuals]
+    """[This function crosses within a part of each parameter which comes from two parents individuals]
 
     Args:
         p_1 ([np.array]): [patern_1]

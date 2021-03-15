@@ -92,10 +92,10 @@ def seleccion(f_adapta):
 def reproduccion(p_repro, p_bina, ind1, ind2, mode, t_p):
   '''
   inputs:
-    n_tp: tamaño total del cromosoma
     p_repro: probabilidad de reproducción
     p_bina : Población inicial en números binarios
     ind1, ind2: índices de individuos seleccionados
+    t_p: size of parameter
 
   outputs:
     hijo1, hijo2: individuos producto de reproducción
