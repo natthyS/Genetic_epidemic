@@ -2,7 +2,7 @@ import logging
 import numpy as np
 import random
 from scipy.integrate import odeint
-from teoric.utils_equations import Diff_Equ
+from teoric.utils_equations import Diff_Equ, Diff_Equ_2
 from scipy.special import softmax
 from genetic.crossover import crossover_wt_par, crossover_bt_par, croosover_in_point
 import logging
