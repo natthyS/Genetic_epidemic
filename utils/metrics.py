@@ -3,15 +3,16 @@ from sklearn.metrics import jaccard_score
 
 def jaccard_index_ind(current_population, index):
 
+    # indentifica el mejor individuo de la población (mayor adaptación por generación)
     individual = current_population[index]
-
+    # elimina el mejor individuo de la población
     current_population_wt_best = np.delete(current_population, index, axis = 0)
-
+    # longitud de población sin mejor individuo
     len_aux_pop = current_population_wt_best.shape[0]
-
+    # crea población auxiliar con mejor individuo del tamaño de la población sin mejor individuo
     arrays = [individual for _ in range(len_aux_pop)]
     aux_pop = np.stack(arrays, axis=0)
-
+    # calcula el jaccard_score entre la población actual y la población auxiliar
     j_score = jaccard_score(aux_pop, current_population_wt_best, average='samples')
 
     return j_score

@@ -37,7 +37,7 @@ def crossover_wt_par(p_1, p_2, t_p):
         hijo1, hijo2 [np.array]: [hijo 1 y hijo 2]
     """  
   
-    # generar 4 números aleatorios de 1 a 7 que corresponde a las posiciones a variar en cada cromosoma
+    # generar 4 números aleatorios de 1 a 7 que corresponde a las posiciones a variar en cada parametro del cromosoma
     cambio = np.random.randint(1,t_p,size=(4) )
    
     # crear listas vacias para cada cromosoma hijo
@@ -53,6 +53,8 @@ def crossover_wt_par(p_1, p_2, t_p):
         # i = 1; cambio[0] = 4
         # crom_h1 += [p_1[7:11], p_2[11:14]]
         # crom_h2 += [p_2[7:11], p_1[11:14]]
+        #.
+        #.
 
     hijo1 = np.concatenate(tuple(crom_h1))
     hijo2 = np.concatenate(tuple(crom_h2)) 
@@ -88,7 +90,7 @@ def crossover_bt_par(parent_1, parent_2, t_p):
         hijo_2[step: step+t_p] = parent_1[step: step+t_p]
 
         # num_par = 2
-        # cambiar = [0,3]
+        # cambiar = [0,2]
         # x = 0
         # step = 0
         # hijo_1[0: 7] = parent_2[0: 7]

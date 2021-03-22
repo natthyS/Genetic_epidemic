@@ -38,7 +38,7 @@ def f_decodi(individuo, x_min, x_max, t_p, n_p):
 def f_adaptacion(p_bina, data, N_indv, x_min, x_max, t_p, n_p, y_initial):
   """
   inputs:
-    p_bina : Población inicial en números binarios
+    p_bina : Población en números binarios
     data: Datos de muertes acumuladas de Pichincha 2020
     N_indv: Número de individuos(par)
     x_min: extremo inferior de valor a ajustar
