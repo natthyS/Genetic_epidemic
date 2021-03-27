@@ -50,7 +50,7 @@ def crossover_wt_par(p_1, p_2, t_p):
         # i = 0; cambio[0] = 2
         # crom_h1 += [p_1[0:2], p_2[2:7]]
         # crom_h2 += [p_2[0:2], p_1[2:7]]
-        # i = 1; cambio[0] = 4
+        # i = 1; cambio[1] = 4
         # crom_h1 += [p_1[7:11], p_2[11:14]]
         # crom_h2 += [p_2[7:11], p_1[11:14]]
         #.
