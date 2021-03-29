@@ -11,7 +11,7 @@ logging.basicConfig(format= log_format, level=logging.INFO)
 x_min = 0           # valor min y max de cada parametro
 x_max = 1
 
-# Parametros de resultadoso
+# Parametros de resultados
 grafi = 5           # cada cuantos pasos guardo el valor de adaptación para graficarlos
 
 

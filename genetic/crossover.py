@@ -103,13 +103,24 @@ def crossover_bt_par(parent_1, parent_2, t_p):
     return hijo_1, hijo_2
 
 def crossover_in_four_points(parent_1, parent_2, n_tp):
+    """[This function performs a crossover in 4 different point in the chromosomes of the parents.
+        Randomly selected point over the entire chromosome lenght range. 
+        Point selection does not consider the lenght of each parameter ]
+
+    Args:
+        parent_1 (np.array): [parent_1]
+        parent_2 (np.array): [parent_2]
+        n_tp ([int]): [total chromosome size]
+
+    Returns:
+         hijo1, hijo2 [np.array]: [hijo 1 y hijo 2]
+    """            
     # parent_1 = np.squeeze(parent_1, axis=0)
     # parent_2 = np.squeeze(parent_2, axis=0)
-    # Esta función recibe los individuos a ser reproducidos y los reproduce
     
-    # en este caso si se reproducen
     # reproducción a cuatro puntos
     k1,k2,k3,k4 = sorted( random.sample(range(3, n_tp-1), 4) ) #no tomo los extremos
+    #????? por qué desde 3?
     ceros = np.zeros(n_tp)
     mascara1 = np.concatenate( (parent_1[:k1], ceros[k1:k2], parent_1[k2:k3], ceros[k3:k4], parent_1[k4: ]) )
     mascara2 = np.concatenate( (ceros[:k1], parent_1[k1:k2], ceros[k2:k3], parent_1[k3:k4], ceros[k4: ]) )

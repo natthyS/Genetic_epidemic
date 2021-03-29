@@ -47,8 +47,8 @@ def f_adaptacion(p_bina, data, N_indv, x_min, x_max, t_p, n_p, y_initial):
     x_max: extremo superior de valor a ajustar
     t_p: tamaño del parámetro(bits/Tamaño)
     n_p: número de a ajustar
+    y_initial: initial vector to solve the differencial equations
    
-
   outputs:
     f_adap : lista con nuevos valores de adaptación
   """
@@ -63,13 +63,16 @@ def f_adaptacion(p_bina, data, N_indv, x_min, x_max, t_p, n_p, y_initial):
   return f_adap
 
 def seleccion(f_adapta, mode):
-  """
-  inputs:
-    f_adapta : array list de valores de adapatacion por individuo
+  """[This function executes a specific selection operator based on the type of mode selected]
 
-  outputs:
-    (ind1, ind2) : tupla con indices de los individuos selecionados
-  """
+  Args:
+      f_adapta ([array]): [array list de valores de adapatacion por individuo]
+      mode ([string]): [type of selection to perform]
+
+  Returns:
+      ind1, ind2 [tuple]: [tupla con indices de los individuos selecionadosn]
+  """  
+  
   if mode == 'st_lib':
     ind1, ind2 = selection_random_library(f_adapta)
   elif mode == "st_wheel":
@@ -80,17 +83,18 @@ def seleccion(f_adapta, mode):
   return ind1, ind2
 
 def reproduccion(p_repro, p_bina, ind1, ind2, mode, t_p):
-  '''
-  inputs:
-    p_repro: probabilidad de reproducción
-    p_bina : Población inicial en números binarios
-    ind1, ind2: índices de individuos seleccionados
-    t_p: size of parameter
+  """[This function executes a specific reproduction operator based on the type of mode selected]
 
-  outputs:
-    hijo1, hijo2: individuos producto de reproducción
-  '''
+  Args:
+      p_repro ([int]): [probabilidad de reproducción]
+      p_bina ([array]): [Población inicial en números binarios]
+      ind1, ind2 ([int]): [índices de individuos seleccionados]
+      mode ([string]): [type of crossover to perform]
+      t_p ([int]): [size of parameter]
 
+  Returns:
+      hijo1, hijo2 ([array]): [individuos producto de reproducción]
+  """  
   xx = np.random.rand()
   if ( p_repro < xx ): 
     return (p_bina[ind1,:], p_bina[ind2,:])
@@ -123,8 +127,9 @@ def mutation(N_indv, n_tp, p_muta, bt, mode):
     N_indv:número de individuos
     p_muta: probabilidad de mutación
     bt: matriz auxiliar para guardar a los hijos
+    mode: type of mutation to perform
   
-  output: N/A
+  output: matrix with mutated individuals
   '''
   
   for i in range(N_indv):
