@@ -101,3 +101,20 @@ def crossover_bt_par(parent_1, parent_2, t_p):
         # hijo_2[14: 21] = parent_1[14:21]
           
     return hijo_1, hijo_2
+
+def crossover_in_four_points(parent_1, parent_2, n_tp):
+    # parent_1 = np.squeeze(parent_1, axis=0)
+    # parent_2 = np.squeeze(parent_2, axis=0)
+    # Esta función recibe los individuos a ser reproducidos y los reproduce
+    
+    # en este caso si se reproducen
+    # reproducción a cuatro puntos
+    k1,k2,k3,k4 = sorted( random.sample(range(3, n_tp-1), 4) ) #no tomo los extremos
+    ceros = np.zeros(n_tp)
+    mascara1 = np.concatenate( (parent_1[:k1], ceros[k1:k2], parent_1[k2:k3], ceros[k3:k4], parent_1[k4: ]) )
+    mascara2 = np.concatenate( (ceros[:k1], parent_1[k1:k2], ceros[k2:k3], parent_1[k3:k4], ceros[k4: ]) )
+    mascara3 = np.concatenate( (parent_2[ :k1], ceros[k1:k2], parent_2[k2:k3], ceros[k3:k4], parent_2[ k4: ]) )
+    mascara4 = np.concatenate( (ceros[:k1], parent_2[k1:k2], ceros[k2:k3], parent_2[k3:k4], ceros[k4: ]) )
+    hijo1 = mascara1 + mascara4 # Se combinan los dos padres para dar un hijo
+    hijo2 = mascara2 + mascara3   # Se combinan los dos padres para dar el otro hijo
+    return hijo1, hijo2

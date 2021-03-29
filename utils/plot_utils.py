@@ -1,7 +1,7 @@
 from os.path import join
 from genetic.genetic import f_decodi
 from teoric.utils_equations import Diff_Equ
-from genetic.main import x_min, x_max, t_p, n_p
+from genetic.main import x_min, x_max
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 import os 
@@ -26,7 +26,7 @@ def plot_adaptacion(list_generations, list_mej_adap,**parameters):
     plt.close()
 
 
-def plot_model(mejor_individuo, y_initial, data, **parameters):
+def plot_model(mejor_individuo, y_initial, t_p, n_p, data, **parameters):
     path_to_save = "stuff/figures/"
     if not os.path.exists(path_to_save):
         os.mkdir(path_to_save)
@@ -56,7 +56,7 @@ def plot_model(mejor_individuo, y_initial, data, **parameters):
     plt.savefig(os.path.join(path_to_save,file_name))
     plt.close()
 
-def plot_dead(mejor_individuo, y_initial, data, **parameters):
+def plot_dead(mejor_individuo, y_initial, t_p, n_p, data, **parameters):
     path_to_save = "stuff/figures/"
     if not os.path.exists(path_to_save):
         os.mkdir(path_to_save)

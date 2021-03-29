@@ -4,7 +4,9 @@ import random
 from scipy.integrate import odeint
 from teoric.utils_equations import Diff_Equ, Diff_Equ_2
 from scipy.special import softmax
-from genetic.crossover import crossover_wt_par, crossover_bt_par, croosover_in_point
+from genetic.crossover import crossover_wt_par, crossover_bt_par, croosover_in_point, crossover_in_four_points
+from genetic.mutation import mutation_in_point, mutation_in_four_point
+from genetic.selection import seleccion_roulette,selection_random_library
 import logging
 
 def f_decodi(individuo, x_min, x_max, t_p, n_p):
@@ -60,7 +62,7 @@ def f_adaptacion(p_bina, data, N_indv, x_min, x_max, t_p, n_p, y_initial):
         f_adap[i] = 1/(1+np.sum(np.square(D-data)))
   return f_adap
 
-def seleccion(f_adapta):
+def seleccion(f_adapta, mode):
   """
   inputs:
     f_adapta : array list de valores de adapatacion por individuo
@@ -68,26 +70,14 @@ def seleccion(f_adapta):
   outputs:
     (ind1, ind2) : tupla con indices de los individuos selecionados
   """
-  # normalizamos de acuerdo a los valores de adaptacion
-  # obtenemos probabilidades por valor de adaptacion
-  #norm_f_add = softmax(f_adapta)          
-  #norm_f_add = 1/(1 + np.exp(-f_add))  #sigmoid
-
-  #create array of index per individual
-  indexes = np.arange(f_adapta.shape[0]) 
-
-
-  ind1 = random.choices(indexes, weights = f_adapta)
-  ind2 = random.choices(indexes, weights = f_adapta)
-
-  # ind1 = np.random.choice(indexes, p = norm_f_add)
-  # ind2 = np.random.choice(indexes, p = norm_f_add)
-
-  while (ind1 == ind2):
-    # ind2 = np.random.choice(indexes, p = norm_f_add)
-    ind2 = random.choices(indexes, weights = f_adapta)
+  if mode == 'st_lib':
+    ind1, ind2 = selection_random_library(f_adapta)
+  elif mode == "st_wheel":
+    ind1, ind2 = seleccion_roulette(f_adapta)
+  else:
+    logging.error('El Modo de seleccion no existente') 
   
-  return (ind1, ind2)
+  return ind1, ind2
 
 def reproduccion(p_repro, p_bina, ind1, ind2, mode, t_p):
   '''
@@ -115,15 +105,18 @@ def reproduccion(p_repro, p_bina, ind1, ind2, mode, t_p):
     hijo1, hijo2 = crossover_bt_par(p_bina[ind1,:], p_bina[ind2,:], t_p)
     hijo1, hijo2 = crossover_wt_par(hijo1, hijo2, t_p)
 
-  elif mode == 'bk_par':
+  elif mode == 'bk1_par':
     hijo1, hijo2 = croosover_in_point(p_bina[ind1,:], p_bina[ind2,:], t_p)
 
+  elif mode == 'bk4_par':
+    hijo1, hijo2 = crossover_in_four_points(p_bina[ind1,:], p_bina[ind2,:], t_p * 4)
+
   else: 
-    logging.info('El Modo no existente') 
+    logging.error('El Modo de crossover no existente') 
   
   return hijo1, hijo2
 
-def mutation(N_indv, n_tp, p_muta, bt):
+def mutation(N_indv, n_tp, p_muta, bt, mode):
   '''
   inputs:
     n_tp: tamaño total del cromosoma
@@ -136,8 +129,11 @@ def mutation(N_indv, n_tp, p_muta, bt):
   
   for i in range(N_indv):
     xx = np.random.rand()
-    if ( p_muta > xx ): 
-      k = np.random.randint(n_tp)# número aleatorio = indice dónde se hará la mutación
-      suma = bt[i, k] + 1
-      bt[i,k] = suma%2 # El resto de la división entera me garantiza el resultado entre 0 y 1
+    if ( p_muta > xx ):
+      if mode == "m1_point":
+        bt[i] = mutation_in_point(bt[i]) 
+
+      elif mode == "m4_point":
+        bt[i] = mutation_in_four_point(bt[i])
+
   return bt

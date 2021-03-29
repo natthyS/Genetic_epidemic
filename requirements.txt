@@ -24,4 +24,5 @@ typing-extensions==3.7.4.3
 virtualenv==20.4.2
 virtualenv-clone==0.5.4
 virtualenvwrapper==4.8.4
+xlrd==1.2.0
 zipp==3.4.1

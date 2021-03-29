@@ -4,24 +4,28 @@ import utils.utils as utils
 from utils.metrics import jaccard_index_ind, jaccard_index_population, sorensen_index_population
 from genetic.genetic import f_adaptacion, seleccion, reproduccion, mutation
 import logging
-log_format = '%(asctime)s | (line %(lineno)d %(filename)s) | [%(levelname)s]: %(message)s'
+log_format = '(line %(lineno)d %(filename)s) | [%(levelname)s]: %(message)s'
 logging.basicConfig(format= log_format, level=logging.INFO)
 
 # Parametros para ajustar el cromosoma
-n_p = 4             # número de parametros a ajustar
-t_p = 7             # tamaño del parámetro(bits/Tamaño)
-n_tp = n_p * t_p    # tamaño total del cromosoma
 x_min = 0           # valor min y max de cada parametro
 x_max = 1
 
-
-# Parametros de resultados
+# Parametros de resultadoso
 grafi = 5           # cada cuantos pasos guardo el valor de adaptación para graficarlos
 
 
 def main_loop(data, parametros):
+
+  # tamaño total del cromosoma
+  n_tp = parametros['n_p'] * parametros['t_p']    
+
+  # # Get survived individuals and dead individuals
+  # N_ind_sup, N_ind_dead = utils.get_surv_and_dead(parametros['ps'], parametros['inds'])
+
   # Get survived individuals and dead individuals
-  N_ind_sup, N_ind_dead = utils.get_surv_and_dead(parametros['ps'], parametros['inds'])
+  N_ind_dead = parametros['inds'] - parametros['nsurv']
+  N_ind_dead += (N_ind_dead % 2)
 
   # Población inicial en números binarios
   p_bina = np.random.randint(2, size=(parametros['inds'], n_tp) ) 
@@ -48,19 +52,24 @@ def main_loop(data, parametros):
 
   # Main Loop
   poblacion_actual = p_bina
-  while (ada_mejor < 0.999) and (current_step< parametros['steps']) :
+  while (ada_mejor < 0.999) and (current_step< parametros['steps'] + 1) :
 
     # obtenemos el valor de adaptacion por individuo
-    f_adapta = f_adaptacion(poblacion_actual, data, parametros['inds'], x_min, x_max, t_p, n_p, parametros['y_initial'])
+    f_adapta = f_adaptacion(poblacion_actual, data, parametros['inds'], x_min, x_max, parametros['t_p'], parametros['n_p'], parametros['y_initial'])
     
+    # Ordenar por valor de adaptación (mayor a menor)
+    poblacion_actual = poblacion_actual[np.argsort(f_adapta)]
+    poblacion_actual = np.flip(poblacion_actual, axis=0)
+
     #Ciclo de reproducción
     for i in range(0,N_ind_dead ,2):
-      id1, id2 = seleccion(f_adapta)
-      bina_temp[i, :], bina_temp[i+1, :]  = reproduccion(parametros['pr'], poblacion_actual, id1, id2, parametros['xmode'], t_p)
+      id1, id2 = seleccion(f_adapta, parametros['select_mode'])
+      # logging.info("Selecting Individual {} with Individual {}".format(id1, id2))
+      bina_temp[i, :], bina_temp[i+1, :]  = reproduccion(parametros['pr'], poblacion_actual, id1, id2, parametros['xmode'], parametros['t_p'])
       
     
     # Mutación
-    bina_temp = mutation(N_ind_dead,n_tp, parametros['pm'], bina_temp)
+    bina_temp = mutation(N_ind_dead,n_tp, parametros['pm'], bina_temp, parametros['mutamode'])
 
     #Actualizo la mejor adaptación
     ada_mejor = np.amax(f_adapta)
@@ -87,10 +96,6 @@ def main_loop(data, parametros):
                                     meta_results['l_jaccard_pop'][-1],
                                     meta_results['l_sorensen_pop'][-1]
                                     ))    
-
-    # Ordenar por valor de adaptación (mayor a menor)
-    poblacion_actual = poblacion_actual[np.argsort(f_adapta)]
-    poblacion_actual = np.flip(poblacion_actual, axis=0)
 
     # Matar a los menos aptos
     poblacion_actual[-N_ind_dead:,:] = bina_temp
