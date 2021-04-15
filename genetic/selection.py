@@ -3,6 +3,7 @@ import numpy as np
 import logging
 
 def seleccion_roulette( f_ad ):
+    
     s_total = sum(f_ad)
     f_adapt_acu = 0.0
     rand_n = s_total * np.random.rand()

@@ -13,7 +13,7 @@ np.random.seed(SEED)
 random.seed(SEED)
 
 # Parametros ajustables
-N_indv = 10          # Número de individuos(par)
+N_indv = 100          # Número de individuos(par)
 N_pasos = 100        # Numero de pasos de la simulación; número de generacions
 p_repro = 0.95       # probabilidad de reproducción, la mayorio del tiempo es fijo
 p_muta = 0.4         # probabilidad de mutación

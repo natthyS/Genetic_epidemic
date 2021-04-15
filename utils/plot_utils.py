@@ -26,6 +26,16 @@ def plot_adaptacion(list_generations, list_mej_adap,**parameters):
     plt.close()
 
 
+def plot_adaptacion_2(list_generations, list_mej_adap, experiment_name):
+    path_to_save = "stuff/figures/"
+    if not os.path.exists(path_to_save):
+        os.mkdir(path_to_save)
+    plt.plot(list_generations, list_mej_adap, "bp-", label = 'Valor de Adaptación según Número de Generación')
+    plt.legend()
+    file_name = "adapta_" + experiment_name + ".jpg"
+    plt.savefig(os.path.join(path_to_save,file_name))
+    plt.close()
+
 def plot_model(mejor_individuo, y_initial, t_p, n_p, data, **parameters):
     path_to_save = "stuff/figures/"
     if not os.path.exists(path_to_save):
@@ -56,6 +66,33 @@ def plot_model(mejor_individuo, y_initial, t_p, n_p, data, **parameters):
     plt.savefig(os.path.join(path_to_save,file_name))
     plt.close()
 
+def plot_model_2(data, y_initial, constants, n_exp):
+    path_to_save = "stuff/figures/"
+    if not os.path.exists(path_to_save):
+        os.mkdir(path_to_save)
+
+    dias = list(range(len(data.index)))
+    sigma, gamma, beta, f = constants
+    Solve = odeint(Diff_Equ, y_initial, dias, args=(sigma, gamma, beta, f) )
+    S,E,I,R,D = [Solve[:,i] for i in range(5)]
+
+    plt.plot(dias, S, 'k--', label="Susceptible")
+    plt.plot(dias, E, label="Exposed")
+    plt.plot(dias, I, '--', label="Infectious")
+    plt.plot(dias, R, label="Recovered")
+    plt.plot(dias, D, label="Deceased")
+    plt.title('THEORETICAL_MODEL \n {} sigma: {:.2f} gamma: {:.2f} beta: {:.2f} f: {:.2f}'.format(n_exp, sigma, gamma, beta, f))
+    plt.legend(loc='upper right')
+    plt.show()
+    
+    
+    file_name = "Model_plots{}".format(n_exp)
+
+    file_name += ".jpg"
+
+    plt.savefig(os.path.join(path_to_save,file_name))
+    plt.close()
+
 def plot_dead(mejor_individuo, y_initial, t_p, n_p, data, **parameters):
     path_to_save = "stuff/figures/"
     if not os.path.exists(path_to_save):
@@ -77,6 +114,30 @@ def plot_dead(mejor_individuo, y_initial, t_p, n_p, data, **parameters):
 
     for key, value in parameters.items():
         file_name += "_{}-{}".format(key,value)
+
+    file_name += ".jpg"
+
+    plt.savefig(os.path.join(path_to_save,file_name))
+    plt.close()
+
+def plot_dead_2(data, y_initial, constants, n_exp):
+    path_to_save = "stuff/figures/"
+    if not os.path.exists(path_to_save):
+        os.mkdir(path_to_save)
+
+    dias = list(range(len(data.index)))
+    sigma, gamma, beta, f = constants
+    Solve = odeint(Diff_Equ, y_initial, dias, args=(sigma, gamma, beta, f) )
+    S,E,I,R,D = [Solve[:,i] for i in range(5)]
+
+    
+    plt.plot(dias, D, label="Deceased")
+    plt.plot(dias, data , label = 'Acumulados-Normal Pichincha(D. Robalino)')
+    plt.title('DECEASED \n {} sigma: {:.2f} gamma: {:.2f} beta: {:.2f} f: {:.2f}'.format(n_exp, sigma, gamma, beta, f))
+    plt.legend()
+    plt.show()
+    
+    file_name = "D_plots_{}".format(n_exp)
 
     file_name += ".jpg"
 
